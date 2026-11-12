@@ -1,0 +1,34 @@
+{
+  "name": "@pb/upload-pipeline",
+  "version": "1.0.0",
+  "description": "Unified dual-storage image compression and upload pipeline for PB Furniture & Kalindra OS",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "image-compression",
+    "upload-pipeline",
+    "cloudflare-r2",
+    "supabase-storage",
+    "pwa"
+  ],
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}
