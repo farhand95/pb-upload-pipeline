@@ -58,7 +58,7 @@ export declare const PURPOSE_PROFILES: Record<UploadPurpose, PurposeProfile>;
 export declare const SECURITY_INVARIANTS: {
     MAX_TOTAL_PIXELS: number;
     MAX_DIMENSION: number;
-    ALLOWED_MIME_TYPES: readonly ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
-    ALLOWED_EXTENSIONS: readonly ['.jpg', '.jpeg', '.png', '.webp', '.avif'];
+    ALLOWED_MIME_TYPES: readonly ["image/jpeg", "image/png", "image/webp", "image/avif"];
+    ALLOWED_EXTENSIONS: readonly [".jpg", ".jpeg", ".png", ".webp", ".avif"];
 };
 //# sourceMappingURL=uploadConfig.d.ts.map

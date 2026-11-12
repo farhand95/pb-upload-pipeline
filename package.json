@@ -1,6 +1,6 @@
 {
   "name": "@pb/upload-pipeline",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Unified dual-storage image compression and upload pipeline for PB Furniture & Kalindra OS",
   "type": "module",
   "main": "dist/index.js",

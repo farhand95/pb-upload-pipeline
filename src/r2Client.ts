@@ -142,7 +142,8 @@ export async function uploadToR2(
 		throw new Error(`Cloudflare R2 upload failed [${response.status}]: ${errorText.slice(0, 150)}`);
 	}
 
-	const basePublicUrl = config.publicDomain.endsWith('/') ? config.publicDomain.slice(0, -1) : config.publicDomain;
+	const publicDomain = config.publicDomain || 'https://pengrajinbogor.pages.dev/media';
+	const basePublicUrl = publicDomain.endsWith('/') ? publicDomain.slice(0, -1) : publicDomain;
 	const publicUrl = `${basePublicUrl}/${cleanPath}`;
 
 	return {
