@@ -38,16 +38,11 @@ export interface UploadPipelineResult {
 export interface SupabaseStorageUploadClient {
     storage: {
         from: (bucket: string) => {
-            upload: (path: string, fileBody: Blob | ArrayBuffer | Uint8Array, options?: {
-                contentType?: string;
-                cacheControl?: string;
-                upsert?: boolean;
-                headers?: Record<string, string>;
-            }) => Promise<{
+            upload: (path: string, fileBody: any, options?: any) => PromiseLike<{
                 data: any;
                 error: any;
             }>;
-            createSignedUrl: (path: string, expiresIn: number) => Promise<{
+            createSignedUrl: (path: string, expiresIn: number) => PromiseLike<{
                 data: {
                     signedUrl: string;
                 } | null;
@@ -61,10 +56,7 @@ export interface SupabaseStorageUploadClient {
         };
     };
     from?: (table: string) => {
-        insert: (values: any) => Promise<{
-            data: any;
-            error: any;
-        }>;
+        insert: (values: any) => PromiseLike<any> | any;
     };
 }
 export interface UploadPipelineEnvironment {

@@ -55,25 +55,20 @@ export interface SupabaseStorageUploadClient {
 		from: (bucket: string) => {
 			upload: (
 				path: string,
-				fileBody: Blob | ArrayBuffer | Uint8Array,
-				options?: {
-					contentType?: string;
-					cacheControl?: string;
-					upsert?: boolean;
-					headers?: Record<string, string>;
-				}
-			) => Promise<{ data: any; error: any }>;
+				fileBody: any,
+				options?: any
+			) => PromiseLike<{ data: any; error: any }>;
 			createSignedUrl: (
 				path: string,
 				expiresIn: number
-			) => Promise<{ data: { signedUrl: string } | null; error: any }>;
+			) => PromiseLike<{ data: { signedUrl: string } | null; error: any }>;
 			getPublicUrl: (
 				path: string
 			) => { data: { publicUrl: string } };
 		};
 	};
 	from?: (table: string) => {
-		insert: (values: any) => Promise<{ data: any; error: any }>;
+		insert: (values: any) => PromiseLike<any> | any;
 	};
 }
 
