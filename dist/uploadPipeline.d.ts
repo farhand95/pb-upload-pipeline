@@ -62,6 +62,7 @@ export interface SupabaseStorageUploadClient {
 export interface UploadPipelineEnvironment {
     supabase?: SupabaseStorageUploadClient;
     r2?: R2ClientConfig;
+    uploadEndpoint?: string;
     activeUserId?: string | number;
     zeroTrustHeader?: string;
 }

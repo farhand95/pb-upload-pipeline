@@ -153,15 +153,71 @@ export async function processAndUploadImage(options, env) {
             }
         }
         else {
-            if (!env.r2) {
-                throw new UploadPipelineError('Cloudflare R2 configuration is missing for public assets.', 'STORAGE_ERROR', false);
+            // Public asset -> Cloudflare Pages Serverless Upload Endpoint (/api/upload)
+            const uploadEndpoint = env.uploadEndpoint || '/api/upload';
+            let uploadSuccessful = false;
+            try {
+                const uploadRes = await fetch(uploadEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'x-storage-path': storagePath,
+                        'content-type': primaryArtifact.mimeType
+                    },
+                    body: primaryArtifact.blob,
+                    signal
+                });
+                if (uploadRes.ok) {
+                    const data = (await uploadRes.json());
+                    if (data?.publicUrl) {
+                        primaryUrl = data.publicUrl;
+                        uploadSuccessful = true;
+                    }
+                }
             }
-            const r2Res = await uploadToR2(storagePath, primaryArtifact.blob, primaryArtifact.mimeType, env.r2);
-            primaryUrl = r2Res.publicUrl;
+            catch (fetchErr) {
+                console.warn('[UploadPipeline] /api/upload gateway notice:', fetchErr);
+            }
+            // Fallback to direct client R2 if direct credentials were provided (e.g. offline dev with keys)
+            if (!uploadSuccessful) {
+                if (env.r2?.accessKeyId && env.r2?.secretAccessKey) {
+                    const r2Res = await uploadToR2(storagePath, primaryArtifact.blob, primaryArtifact.mimeType, env.r2);
+                    primaryUrl = r2Res.publicUrl;
+                }
+                else {
+                    throw new UploadPipelineError('Gagal mengunggah foto ke server Cloudflare. Pastikan koneksi internet stabil.', 'NETWORK_ERROR', true);
+                }
+            }
             onProgress?.(80, 'uploading');
             if (thumbStoragePath && compressionResult.thumbnail) {
-                const r2ThumbRes = await uploadToR2(thumbStoragePath, compressionResult.thumbnail.blob, compressionResult.thumbnail.mimeType, env.r2);
-                thumbnailUrl = r2ThumbRes.publicUrl;
+                let thumbUploaded = false;
+                try {
+                    const thumbRes = await fetch(uploadEndpoint, {
+                        method: 'POST',
+                        headers: {
+                            'x-storage-path': thumbStoragePath,
+                            'content-type': compressionResult.thumbnail.mimeType
+                        },
+                        body: compressionResult.thumbnail.blob,
+                        signal
+                    });
+                    if (thumbRes.ok) {
+                        const data = (await thumbRes.json());
+                        if (data?.publicUrl) {
+                            thumbnailUrl = data.publicUrl;
+                            thumbUploaded = true;
+                        }
+                    }
+                }
+                catch { }
+                if (!thumbUploaded) {
+                    if (env.r2?.accessKeyId && env.r2?.secretAccessKey) {
+                        const r2ThumbRes = await uploadToR2(thumbStoragePath, compressionResult.thumbnail.blob, compressionResult.thumbnail.mimeType, env.r2);
+                        thumbnailUrl = r2ThumbRes.publicUrl;
+                    }
+                    else {
+                        thumbnailUrl = primaryUrl;
+                    }
+                }
             }
             else {
                 thumbnailUrl = primaryUrl;
